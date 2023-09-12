@@ -1,4 +1,6 @@
-export const enum ActionType {
+import {typeguard, isEnum} from '../utils';
+
+export enum ActionType {
   Reload,
   Close,
   ToggleMute,
@@ -17,3 +19,7 @@ export type IncreaseZoomAction = Readonly<{
 }>;
 
 export type Action = ReloadAction | IncreaseZoomAction;
+
+export const actionTypeguard = typeguard<Action>(
+  ['type', isEnum(ActionType)],
+);

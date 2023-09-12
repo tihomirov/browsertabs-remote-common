@@ -51,15 +51,15 @@ export class PeerDeviceConnection implements IDeviceConnection {
     this._connection.send(action);
   }
 
-  sendMessage(message: Message): void {
-    this._connection.send(message);
-  }
-
   dispose(): void {
     this._connection.close();
     this._unsubscribeSubject$.next();
     this._unsubscribeSubject$.complete();
   }
+
+  private readonly sendMessage = (message: Message): void => {
+    this._connection.send(message);
+  };
 
   private readonly onOpen = (): void  => {
     this.sendMessage({
