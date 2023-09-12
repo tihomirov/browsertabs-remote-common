@@ -1,11 +1,11 @@
 export const enum ActionType {
-  Reload = 'Reload',
-  Close = 'Close',
-  ToggleMute = 'Toggle Mute',
-  IncreaseZoom = 'Increase Zoom',
-  DecreaseZoom = 'Decrease Zoom',
-  SetZoom = 'Set Zoom',
-  Create = 'Create',
+  Reload,
+  Close,
+  ToggleMute,
+  IncreaseZoom,
+  DecreaseZoom,
+  SetZoom,
+  Create,
 }
 
 export type ReloadAction = Readonly<{
