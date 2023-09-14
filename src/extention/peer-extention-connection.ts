@@ -1,33 +1,24 @@
 import {Peer, DataConnection} from 'peerjs';
-import {BehaviorSubject, Observable, Subject, fromEventPattern} from 'rxjs';
+import {Observable, Subject, fromEventPattern} from 'rxjs';
 import {filter, map, switchMap, takeUntil} from 'rxjs/operators';
 
 import {Action, Message, messageTypeguard, actionTypeguard, MessageType} from '../common';
 import {IExtentionConnection} from './types';
-import {isSomething} from '../common/utils';
 import {TabInfo} from '../types';
 
 export class PeerExtentionConnection implements IExtentionConnection {
   readonly action$: Observable<Action>;
   readonly close$: Observable<void>;
+  readonly disconnected$: Observable<void>;
+  readonly open$: Observable<string>;
+  readonly error$: Observable<string>;
   private readonly _peer: Peer;
   private readonly _unsubscribeSubject$ = new Subject<void>();
-  private readonly _error$ = new Subject<string>();
   private readonly _connected$ = new Subject<DataConnection>();
-  private readonly _open$ = new BehaviorSubject<string | undefined>(undefined);
   private _dataConnection: DataConnection | undefined = undefined;
 
-  constructor(private readonly _tabbInfo: TabInfo) {
+  constructor(private readonly _tabInfo: TabInfo) {
     this._peer = new Peer();
-
-    // TODO: refactor to fromEventPattern
-    this._peer.once('open', (peerId) => {
-      this._open$.next(peerId);
-    });
-
-    this._peer.on('error', (error) => {
-      this._error$.next(error.message);
-    });
 
     this._peer.on('connection', (connection: DataConnection): void => {
       this._dataConnection = connection;
@@ -60,11 +51,27 @@ export class PeerExtentionConnection implements IExtentionConnection {
       takeUntil(this._unsubscribeSubject$),
       map(() => undefined),
     );
-  }
 
-  get open$(): Observable<string> {
-    return this._open$.pipe(
-      filter(isSomething)
+    this.disconnected$ = fromEventPattern(
+      handler => this._peer.on('disconnected', handler),
+      handler => this._peer.off('disconnected', handler),
+    ).pipe(
+      takeUntil(this._unsubscribeSubject$),
+      map(() => undefined),
+    );
+
+    this.open$ = fromEventPattern<string>(
+      handler => this._peer.on('open', handler),
+      handler => this._peer.off('open', handler),
+    ).pipe(
+      takeUntil(this._unsubscribeSubject$),
+    );
+
+    this.error$ = fromEventPattern<string>(
+      handler => this._peer.on('error', handler),
+      handler => this._peer.off('error', handler),
+    ).pipe(
+      takeUntil(this._unsubscribeSubject$),
     );
   }
 
@@ -72,8 +79,8 @@ export class PeerExtentionConnection implements IExtentionConnection {
     return this._connected$;
   }
 
-  get error$(): Observable<string> {
-    return this._error$;
+  get peerId(): string {
+    return this._peer.id;
   }
 
   destroy(): void {
@@ -87,7 +94,7 @@ export class PeerExtentionConnection implements IExtentionConnection {
     if (message.type === MessageType.TabInfoRequest) {
       this.sendMessage({
         type: MessageType.TabInfoResponse,
-        tabInfo: this._tabbInfo,
+        tabInfo: this._tabInfo,
       });
     }
   };

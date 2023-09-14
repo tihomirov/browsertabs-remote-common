@@ -8,5 +8,6 @@ export interface IExtentionConnection {
   action$: Observable<Action>;
   error$: Observable<string>;
   close$: Observable<void>;
+  peerId: string;
   destroy(): void;
 }
