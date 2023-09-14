@@ -47,6 +47,10 @@ export class PeerDeviceConnection implements IDeviceConnection {
     return this._tabInfo$;
   }
 
+  get peerId(): string {
+    return this._peerId;
+  }
+
   get actions$(): Observable<ReadonlyArray<Action>> {
     return of([
       {
