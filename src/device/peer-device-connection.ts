@@ -1,9 +1,9 @@
 import type {Peer, DataConnection, PeerErrorType} from 'peerjs';
-import {BehaviorSubject, fromEventPattern, Observable, Subject} from 'rxjs';
+import {BehaviorSubject, fromEventPattern, Observable, of, Subject} from 'rxjs';
 import {filter, takeUntil} from 'rxjs/operators';
 
 import {TabInfo} from '../types';
-import {Action, Message, MessageType, messageTypeguard} from '../common';
+import {Action, ActionType, Message, MessageType, messageTypeguard} from '../common';
 import {IDeviceConnection} from './types';
 
 export class PeerDeviceConnection implements IDeviceConnection {
@@ -45,6 +45,17 @@ export class PeerDeviceConnection implements IDeviceConnection {
 
   get tabInfo$(): Observable<TabInfo | undefined> {
     return this._tabInfo$;
+  }
+
+  get actions$(): Observable<ReadonlyArray<Action>> {
+    return of([
+      {
+        type: ActionType.Reload,
+      },
+      {
+        type: ActionType.IncreaseZoom,
+      },
+    ]);
   }
 
   sendAction(action: Action): void {
