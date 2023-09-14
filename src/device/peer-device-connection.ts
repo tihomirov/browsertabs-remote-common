@@ -5,6 +5,7 @@ import {filter, takeUntil} from 'rxjs/operators';
 import {TabInfo} from '../types';
 import {Action, ActionType, Message, MessageType, messageTypeguard} from '../common';
 import {IDeviceConnection} from './types';
+import {isSomething} from '../common/utils';
 
 export class PeerDeviceConnection implements IDeviceConnection {
   readonly error$: Observable<{type: PeerErrorType}>;
@@ -43,8 +44,10 @@ export class PeerDeviceConnection implements IDeviceConnection {
     ).subscribe(this.onMessage);
   }
 
-  get tabInfo$(): Observable<TabInfo | undefined> {
-    return this._tabInfo$;
+  get tabInfo$(): Observable<TabInfo> {
+    return this._tabInfo$.pipe(
+      filter(isSomething)
+    );
   }
 
   get peerId(): string {
