@@ -9,6 +9,7 @@ import {isSomething} from '../common/utils';
 
 export class PeerDeviceConnection implements IDeviceConnection {
   readonly error$: Observable<{type: PeerErrorType}>;
+  readonly close$: Observable<void>;
   private readonly _connection: DataConnection;
   private readonly _unsubscribeSubject$ = new Subject<void>();
   private readonly _tabInfo$ = new BehaviorSubject<TabInfo | undefined>(undefined);
@@ -23,6 +24,14 @@ export class PeerDeviceConnection implements IDeviceConnection {
       handler => this._connection.on('error', handler),
       handler => this._connection.off('error', handler),
       (data: {type: PeerErrorType}) => data,
+    ).pipe(
+      takeUntil(this._unsubscribeSubject$)
+    );
+    
+    this.close$ = fromEventPattern(
+      handler => this._connection.on('close', handler),
+      handler => this._connection.off('close', handler),
+      () => undefined,
     ).pipe(
       takeUntil(this._unsubscribeSubject$)
     );

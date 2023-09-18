@@ -8,6 +8,7 @@ export interface IDeviceConnection {
   readonly tabInfo$: Observable<TabInfo>;
   readonly error$: Observable<{type: PeerErrorType}>;
   readonly actions$: Observable<ReadonlyArray<Action>>;
+  readonly close$: Observable<void>;
   readonly peerId: string;
   sendAction(action: Action): void;
   dispose(): void;
