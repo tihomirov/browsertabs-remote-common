@@ -1,9 +1,9 @@
 import type {Peer, DataConnection, PeerErrorType} from 'peerjs';
 import {BehaviorSubject, fromEventPattern, Observable, of, Subject} from 'rxjs';
-import {filter, takeUntil} from 'rxjs/operators';
+import {filter, takeUntil, map} from 'rxjs/operators';
 
 import {TabInfo} from '../types';
-import {Action, ActionType, Message, MessageType, messageTypeguard} from '../common';
+import {Action, ActionType, Message, MessageType, createDataAction, createDataMessage, dataMessageTypeguard} from '../common';
 import {IDeviceConnection} from './types';
 import {isSomething} from '../common/utils';
 
@@ -49,7 +49,8 @@ export class PeerDeviceConnection implements IDeviceConnection {
       handler => this._connection.off('data', handler),
     ).pipe(
       takeUntil(this._unsubscribeSubject$),
-      filter(messageTypeguard)
+      filter(dataMessageTypeguard),
+      map(data => data.message),
     ).subscribe(this.onMessage);
   }
 
@@ -75,7 +76,7 @@ export class PeerDeviceConnection implements IDeviceConnection {
   }
 
   sendAction(action: Action): void {
-    this._connection.send(action);
+    this._connection.send(createDataAction(action));
   }
 
   dispose(): void {
@@ -85,7 +86,7 @@ export class PeerDeviceConnection implements IDeviceConnection {
   }
 
   private readonly sendMessage = (message: Message): void => {
-    this._connection.send(message);
+    this._connection.send(createDataMessage(message));
   };
 
   private readonly onOpen = (): void  => {

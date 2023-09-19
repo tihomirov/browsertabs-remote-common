@@ -2,7 +2,7 @@ import {Peer, DataConnection} from 'peerjs';
 import {Observable, Subject, fromEventPattern} from 'rxjs';
 import {filter, map, switchMap, takeUntil} from 'rxjs/operators';
 
-import {Action, Message, messageTypeguard, actionTypeguard, MessageType} from '../common';
+import {Action, Message, MessageType, createDataMessage, dataActionTypeguard, dataMessageTypeguard} from '../common';
 import {IExtentionConnection} from './types';
 import {TabInfo} from '../types';
 
@@ -31,7 +31,8 @@ export class PeerExtentionConnection implements IExtentionConnection {
         handler => connection.off('data', handler),
       )),
       takeUntil(this._unsubscribeSubject$),
-      filter(actionTypeguard)
+      filter(dataActionTypeguard),
+      map(data => data.action),
     );
 
     this._connected$.pipe(
@@ -40,7 +41,8 @@ export class PeerExtentionConnection implements IExtentionConnection {
         handler => connection.off('data', handler),
       )),
       takeUntil(this._unsubscribeSubject$),
-      filter(messageTypeguard)
+      filter(dataMessageTypeguard),
+      map(data => data.message),
     ).subscribe( this.onConnectionMessage);
 
     this.close$ = this._connected$.pipe(
@@ -100,6 +102,6 @@ export class PeerExtentionConnection implements IExtentionConnection {
   };
 
   private readonly sendMessage = (message: Message): void => {
-    this._dataConnection?.send(message);
+    this._dataConnection?.send(createDataMessage(message));
   };
 }

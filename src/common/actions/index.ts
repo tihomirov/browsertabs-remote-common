@@ -20,6 +20,21 @@ export type IncreaseZoomAction = Readonly<{
 
 export type Action = ReloadAction | IncreaseZoomAction;
 
-export const actionTypeguard = typeguard<Action>(
+const actionTypeguard = typeguard<Action>(
   ['type', isEnum(ActionType)],
 );
+
+type DataAction = Readonly<{
+  type: 'action';
+  action: Action;
+}>;
+
+export const dataActionTypeguard = typeguard<DataAction>(
+  ['type', v => v === 'action'],
+  ['action', actionTypeguard],
+);
+
+export const createDataAction = (action: Action): DataAction => ({
+  type: 'action',
+  action
+});
