@@ -64,14 +64,15 @@ export class PeerDeviceConnection implements IDeviceConnection {
     return this._peerId;
   }
 
-  get actions$(): Observable<ReadonlyArray<Action>> {
+  get actions$(): Observable<ReadonlyArray<ActionType>> {
     return of([
-      {
-        type: ActionType.Reload,
-      },
-      {
-        type: ActionType.IncreaseZoom,
-      },
+      ActionType.Reload,
+      ActionType.Close,
+      ActionType.ToggleMute,
+      ActionType.IncreaseZoom,
+      ActionType.DecreaseZoom,
+      ActionType.SetZoom,
+      ActionType.Create
     ]);
   }
 

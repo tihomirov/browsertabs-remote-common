@@ -14,11 +14,34 @@ export type ReloadAction = Readonly<{
   type: ActionType.Reload;
 }>;
 
+export type CloseAction = Readonly<{
+  type: ActionType.Close;
+}>;
+
+
+export type ToggleMuteAction = Readonly<{
+  type: ActionType.ToggleMute;
+}>;
+
 export type IncreaseZoomAction = Readonly<{
   type: ActionType.IncreaseZoom;
 }>;
 
-export type Action = ReloadAction | IncreaseZoomAction;
+export type DecreaseZoomAction = Readonly<{
+  type: ActionType.DecreaseZoom;
+}>;
+
+export type SetZoomAction = Readonly<{
+  type: ActionType.SetZoom;
+  zoomFactor: number;
+}>;
+
+export type CreateAction = Readonly<{
+  type: ActionType.Create;
+  url: string;
+}>;
+
+export type Action = ReloadAction | CloseAction | ToggleMuteAction | IncreaseZoomAction | DecreaseZoomAction | SetZoomAction | CreateAction;
 
 const actionTypeguard = typeguard<Action>(
   ['type', isEnum(ActionType)],
