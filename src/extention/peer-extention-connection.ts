@@ -1,17 +1,17 @@
-import {Peer, DataConnection} from 'peerjs';
+import {Peer, DataConnection, PeerErrorType} from 'peerjs';
 import {Observable, Subject, fromEventPattern} from 'rxjs';
 import {filter, map, switchMap, takeUntil} from 'rxjs/operators';
 
-import {Action, isString, Message, MessageType, createDataMessage, dataActionTypeguard, dataMessageTypeguard} from '../common';
+import {Action, Message, MessageType, createDataMessage, dataActionTypeguard, dataMessageTypeguard} from '../common';
 import {TabInfo} from '../types';
-import {IExtentionConnection, peerErrorTypeTypeguard} from './types';
+import {IExtentionConnection} from './types';
 
 export class PeerExtentionConnection implements IExtentionConnection {
   readonly action$: Observable<Action>;
   readonly close$: Observable<void>;
   readonly disconnected$: Observable<void>;
   readonly open$: Observable<string>;
-  readonly error$: Observable<string>;
+  readonly error$: Observable<{type: PeerErrorType}>;
   private readonly _peer: Peer;
   private readonly _unsubscribeSubject$ = new Subject<void>();
   private readonly _connected$ = new Subject<DataConnection>();
@@ -69,21 +69,11 @@ export class PeerExtentionConnection implements IExtentionConnection {
       takeUntil(this._unsubscribeSubject$),
     );
 
-    this.error$ = fromEventPattern<string>(
+    this.error$ = fromEventPattern(
       handler => this._peer.on('error', handler),
       handler => this._peer.off('error', handler),
+      (data: {type: PeerErrorType}) => data,
     ).pipe(
-      map((error: unknown) => {
-        if (isString(error)) {
-          return error;
-        }
-
-        if (peerErrorTypeTypeguard(error)) {
-          return error.type;
-        }
-
-        return (error as Error).toString();
-      }),
       takeUntil(this._unsubscribeSubject$),
     );
   }
