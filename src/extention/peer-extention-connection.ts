@@ -1,8 +1,8 @@
-import {Peer, DataConnection, PeerErrorType} from 'peerjs';
-import {Observable, Subject, fromEventPattern} from 'rxjs';
+import {DataConnection, Peer, PeerErrorType} from 'peerjs';
+import {fromEventPattern,Observable, Subject} from 'rxjs';
 import {filter, map, switchMap, takeUntil} from 'rxjs/operators';
 
-import {Action, Message, MessageType, createDataMessage, dataActionTypeguard, dataMessageTypeguard} from '../common';
+import {Action, createDataMessage, dataActionTypeguard, dataMessageTypeguard,Message, MessageType} from '../common';
 import {TabInfo} from '../types';
 import {IExtentionConnection} from './types';
 

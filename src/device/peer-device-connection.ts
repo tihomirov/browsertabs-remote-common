@@ -1,11 +1,11 @@
-import type {Peer, DataConnection, PeerErrorType} from 'peerjs';
+import type {DataConnection, Peer, PeerErrorType} from 'peerjs';
 import {BehaviorSubject, fromEventPattern, Observable, of, Subject} from 'rxjs';
-import {filter, takeUntil, map} from 'rxjs/operators';
+import {filter, map,takeUntil} from 'rxjs/operators';
 
-import {TabInfo} from '../types';
-import {Action, ActionType, Message, MessageType, createDataAction, createDataMessage, dataMessageTypeguard} from '../common';
-import {IDeviceConnection} from './types';
+import {Action, ActionType, createDataAction, createDataMessage, dataMessageTypeguard,Message, MessageType} from '../common';
 import {isSomething} from '../common/utils';
+import {TabInfo} from '../types';
+import {IDeviceConnection} from './types';
 
 export class PeerDeviceConnection implements IDeviceConnection {
   readonly error$: Observable<{type: PeerErrorType}>;
@@ -15,11 +15,11 @@ export class PeerDeviceConnection implements IDeviceConnection {
   private readonly _tabInfo$ = new BehaviorSubject<TabInfo | undefined>(undefined);
 
   constructor(
-    private readonly _peer: Peer, 
+    private readonly _peer: Peer,
     private readonly _peerId: string,
   ) {
     this._connection = this._peer.connect(this._peerId);
-    
+
     this.error$ = fromEventPattern(
       handler => this._connection.on('error', handler),
       handler => this._connection.off('error', handler),
@@ -27,7 +27,7 @@ export class PeerDeviceConnection implements IDeviceConnection {
     ).pipe(
       takeUntil(this._unsubscribeSubject$)
     );
-    
+
     this.close$ = fromEventPattern(
       handler => this._connection.on('close', handler),
       handler => this._connection.off('close', handler),

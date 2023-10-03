@@ -1,6 +1,6 @@
-import type {Observable} from 'rxjs';
 import {DataConnection} from 'peerjs';
 import {PeerErrorType} from 'peerjs';
+import type {Observable} from 'rxjs';
 
 import {Action} from '../common';
 

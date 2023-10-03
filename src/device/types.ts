@@ -1,5 +1,5 @@
-import type {Observable} from 'rxjs';
 import type {PeerErrorType} from 'peerjs';
+import type {Observable} from 'rxjs';
 
 import {Action, ActionType} from '../common';
 import {TabInfo} from '../types';

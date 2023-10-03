@@ -1,5 +1,5 @@
-import {typeguard, isEnum} from '../utils';
 import {TabInfo} from '../../types';
+import {isEnum,typeguard} from '../utils';
 
 export enum MessageType {
   TabInfoRequest,

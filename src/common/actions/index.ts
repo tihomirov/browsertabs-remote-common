@@ -1,4 +1,4 @@
-import {typeguard, isEnum} from '../utils';
+import {isEnum,typeguard} from '../utils';
 
 export enum ActionType {
   Reload,
@@ -17,7 +17,6 @@ export type ReloadAction = Readonly<{
 export type CloseAction = Readonly<{
   type: ActionType.Close;
 }>;
-
 
 export type ToggleMuteAction = Readonly<{
   type: ActionType.ToggleMute;
