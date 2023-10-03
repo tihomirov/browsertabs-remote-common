@@ -2,7 +2,15 @@ import type {DataConnection, Peer, PeerErrorType} from 'peerjs';
 import {BehaviorSubject, fromEventPattern, Observable, of, Subject} from 'rxjs';
 import {filter, map,takeUntil} from 'rxjs/operators';
 
-import {Action, ActionType, createDataAction, createDataMessage, dataMessageTypeguard,Message, MessageType} from '../common';
+import {
+  Action,
+  ActionType,
+  createDataAction,
+  createDataMessage,
+  dataMessageTypeguard,
+  Message,
+  MessageType
+} from '../common';
 import {isSomething} from '../common/utils';
 import {TabInfo} from '../types';
 import {IDeviceConnection} from './types';

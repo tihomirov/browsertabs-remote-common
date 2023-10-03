@@ -40,7 +40,13 @@ export type CreateAction = Readonly<{
   url: string;
 }>;
 
-export type Action = ReloadAction | CloseAction | ToggleMuteAction | IncreaseZoomAction | DecreaseZoomAction | SetZoomAction | CreateAction;
+export type Action = ReloadAction |
+  CloseAction |
+  ToggleMuteAction |
+  IncreaseZoomAction |
+  DecreaseZoomAction |
+  SetZoomAction |
+  CreateAction;
 
 const actionTypeguard = typeguard<Action>(
   ['type', isEnum(ActionType)],
