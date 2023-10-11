@@ -24,8 +24,8 @@ export class PeerExtentionConnection implements IExtentionConnection {
   private readonly _connected$ = new Subject<DataConnection>();
   private _dataConnection: DataConnection | undefined = undefined;
 
-  constructor(private readonly _tabInfo: TabInfo) {
-    this._peer = new Peer();
+  constructor(private readonly _tabInfo: TabInfo, peerId?: string) {
+    this._peer = peerId ? new Peer(peerId) : new Peer();
 
     this._peer.on('connection', (connection: DataConnection): void => {
       this._dataConnection = connection;
